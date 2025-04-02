@@ -6,6 +6,7 @@ import {
   bookSchema,
   studentIdSchema,
   bookIdSchema,
+  studentBookAssignmentSchema,
 } from '../validations/schemas'
 
 const router = Router()
@@ -18,14 +19,12 @@ router.get(
 )
 router.post(
   '/student/:studentId/books/:bookId',
-  validate(studentIdSchema, { target: 'params' }),
-  validate(bookIdSchema, { target: 'params' }),
+  validate(studentBookAssignmentSchema, { target: 'params' }),
   studentController.addBookToStudent
 )
 router.delete(
   '/student/:studentId/books/:bookId',
-  validate(studentIdSchema, { target: 'params' }),
-  validate(bookIdSchema, { target: 'params' }),
+  validate(studentBookAssignmentSchema, { target: 'params' }),
   studentController.removeBookFromStudent
 )
 

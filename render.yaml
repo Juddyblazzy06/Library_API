@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: library-rest-api
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 24h
+      - key: CORS_ORIGIN
+        value: '*'
+    autoDeploy: true
+    plan: free
+
+  - type: web
+    name: library-graphql-api
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:graphql
+    healthCheckPath: /graphql
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4001
+      - key: MONGODB_URI
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRES_IN
+        value: 24h
+      - key: CORS_ORIGIN
+        value: '*'
+    autoDeploy: true
+    plan: free

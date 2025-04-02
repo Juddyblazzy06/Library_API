@@ -15,16 +15,24 @@ import { errorHandler } from './middleware/errorHandler'
 
 dotenv.config()
 
-const app: Application = express()
+// Create separate Express apps for REST and GraphQL
+const restApp: Application = express()
+const graphqlApp: Application = express()
 
-// Middleware
-app.use(cors())
-app.use(express.json())
+// Middleware for both apps
+restApp.use(cors())
+restApp.use(express.json())
+graphqlApp.use(cors())
+graphqlApp.use(express.json())
 
 // REST API Routes
-app.use('/api/teachers', teacherRoutes)
-app.use('/api/students', studentRoutes)
-app.use('/api/books', bookRoutes)
+restApp.use('/api/teachers', teacherRoutes)
+restApp.use('/api/students', studentRoutes)
+restApp.use('/api/books', bookRoutes)
+
+// Error Handling Middleware
+restApp.use(errorHandler)
+graphqlApp.use(errorHandler)
 
 // GraphQL Setup
 const startApolloServer = async () => {
@@ -46,7 +54,7 @@ const startApolloServer = async () => {
   })
 
   await server.start()
-  server.applyMiddleware({ app: app as any })
+  server.applyMiddleware({ app: graphqlApp as any })
 }
 
 // MongoDB Connection
@@ -65,26 +73,44 @@ const connectDB = async () => {
   }
 }
 
-// Error Handling Middleware
-app.use(errorHandler)
+// Ports configuration
+const REST_PORT = process.env.REST_PORT || 4000
+const GRAPHQL_PORT = process.env.GRAPHQL_PORT || 4001
 
-// Start Server
-const PORT = process.env.PORT || 4000
-
-// Only start the server if we're not in a test environment
+// Only start the servers if we're not in a test environment
 if (process.env.NODE_ENV !== 'test') {
-  const server = app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-    console.log(`GraphQL endpoint: http://localhost:${PORT}/graphql`)
+  // Start REST API server
+  const restServer = restApp.listen(REST_PORT, () => {
+    console.log(`REST API Server running on port ${REST_PORT}`)
+    console.log(
+      `REST API endpoints available at http://localhost:${REST_PORT}/api`
+    )
+  })
+
+  // Start GraphQL server
+  const graphqlServer = graphqlApp.listen(GRAPHQL_PORT, () => {
+    console.log(`GraphQL Server running on port ${GRAPHQL_PORT}`)
+    console.log(
+      `GraphQL Playground available at http://localhost:${GRAPHQL_PORT}/graphql`
+    )
   })
 
   // Handle server errors
-  server.on('error', (error: any) => {
+  restServer.on('error', (error: any) => {
     if (error.code === 'EADDRINUSE') {
-      console.error(`Port ${PORT} is already in use`)
+      console.error(`REST API Port ${REST_PORT} is already in use`)
       process.exit(1)
     } else {
-      console.error('Server error:', error)
+      console.error('REST API Server error:', error)
+    }
+  })
+
+  graphqlServer.on('error', (error: any) => {
+    if (error.code === 'EADDRINUSE') {
+      console.error(`GraphQL Port ${GRAPHQL_PORT} is already in use`)
+      process.exit(1)
+    } else {
+      console.error('GraphQL Server error:', error)
     }
   })
 
@@ -95,6 +121,6 @@ if (process.env.NODE_ENV !== 'test') {
   })
 }
 
-export { app, connectDB }
+export { restApp, graphqlApp, connectDB }
 
 // Main application entry point

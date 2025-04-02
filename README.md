@@ -1,17 +1,77 @@
 # Library Management System
 
-A Node.js-based Library Management System built with Express and MongoDB, following the MVC architecture pattern.
+A full-stack library management system with both REST and GraphQL APIs.
+
+## Deployment Instructions
+
+### Prerequisites
+
+- MongoDB Atlas account
+- Redis account
+- Render account
+
+### Environment Variables
+
+Before deploying, you'll need to set up the following environment variables in your Render dashboard:
+
+1. `MONGODB_URI`: Your MongoDB connection string
+2. `REDIS_URL`: Your Redis connection string
+3. `JWT_SECRET`: A secure secret for JWT token generation
+4. `JWT_EXPIRES_IN`: Token expiration time (default: 24h)
+5. `CORS_ORIGIN`: Allowed origins for CORS (default: "\*")
+
+### Deployment Steps
+
+1. Fork this repository to your GitHub account
+2. Create a new Web Service in Render
+3. Connect your GitHub repository
+4. Configure the following settings:
+   - Build Command: `npm install`
+   - Start Command: `npm run start` (for REST API) or `npm run start:graphql` (for GraphQL API)
+   - Environment: Node
+   - Port: 4000 (REST) or 4001 (GraphQL)
+
+### Postman Collection Setup
+
+1. Import the `Library_Management_System.postman_collection.json` file
+2. Create a new environment in Postman
+3. Add the following variables:
+   - `rest_api_url`: Your REST API URL (e.g., https://library-rest-api.onrender.com)
+   - `graphql_api_url`: Your GraphQL API URL (e.g., https://library-graphql-api.onrender.com/graphql)
+
+### API Endpoints
+
+#### REST API
+
+- Base URL: `https://library-rest-api.onrender.com`
+- Documentation: Available at `/api-docs`
+
+#### GraphQL API
+
+- Endpoint: `https://library-graphql-api.onrender.com/graphql`
+- Playground: Available at the same URL
+
+## Local Development
+
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Set up environment variables in `.env` file
+4. Start the development server:
+   - REST API: `npm run dev`
+   - GraphQL API: `npm run dev:graphql`
 
 ## Features
 
-- User Authentication (Register/Login)
-- Book Management (Add/Edit/Delete/List books)
-- Student Management
-- Teacher Management
-- Borrowing System
-- Redis Caching
-- GraphQL API
-- REST API
+- User authentication and authorization
+- Book management
+- Student management
+- Teacher management
+- Book assignments
+- Redis caching
+- Rate limiting
+- Input validation
+- Error handling
+- API documentation
 
 ## Prerequisites
 

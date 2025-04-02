@@ -53,32 +53,62 @@
         {
           "name": "Get All Teachers",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "url": {
-              "raw": "{{base_url}}/teachers",
-              "host": ["{{base_url}}"],
-              "path": ["teachers"]
+              "raw": "{{graphql_url}}",
+              "host": ["{{graphql_url}}"]
             },
-            "description": "Get all teachers"
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response is an array\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.be.an('array');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query GetAllTeachers {\\n  teachers {\\n    id\\n    name\\n    email\\n    subject\\n    phone\\n    grade\\n    students {\\n      id\\n      name\\n      email\\n    }\\n  }\\n}\"\n}"
+            },
+            "description": "Get all teachers with their details"
+          }
+        },
+        {
+          "name": "Get Teacher Students",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{graphql_url}}",
+              "host": ["{{graphql_url}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query GetTeacherStudents($teacherId: String!) {\\n  teacherStudents(teacherId: $teacherId) {\\n    id\\n    name\\n    email\\n    grade\\n    books {\\n      id\\n      title\\n      author\\n    }\\n  }\\n}\",\n  \"variables\": {\n    \"teacherId\": \"{{teacher_id}}\"\n  }\n}"
+            },
+            "description": "Get all students assigned to a specific teacher"
+          }
+        },
+        {
+          "name": "Add Student to Teacher",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{graphql_url}}",
+              "host": ["{{graphql_url}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation AddStudentToTeacher($teacherId: String!, $studentId: String!) {\\n  addStudentToTeacher(teacherId: $teacherId, studentId: $studentId) {\\n    id\\n    name\\n    email\\n    subject\\n    phone\\n    grade\\n    students {\\n      id\\n      name\\n      email\\n    }\\n  }\\n}\",\n  \"variables\": {\n    \"teacherId\": \"{{teacher_id}}\",\n    \"studentId\": \"{{student_id}}\"\n  }\n}"
+            },
+            "description": "Add a student to a teacher's class"
+          }
+        },
+        {
+          "name": "Remove Student from Teacher",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{graphql_url}}",
+              "host": ["{{graphql_url}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation RemoveStudentFromTeacher($teacherId: String!, $studentId: String!) {\\n  removeStudentFromTeacher(teacherId: $teacherId, studentId: $studentId) {\\n    id\\n    name\\n    email\\n    subject\\n    phone\\n    grade\\n    students {\\n      id\\n      name\\n      email\\n    }\\n  }\\n}\",\n  \"variables\": {\n    \"teacherId\": \"{{teacher_id}}\",\n    \"studentId\": \"{{student_id}}\"\n  }\n}"
+            },
+            "description": "Remove a student from a teacher's class"
+          }
         },
         {
           "name": "Get Teacher by ID",
@@ -160,62 +190,77 @@
         {
           "name": "Get All Students",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "url": {
-              "raw": "{{base_url}}/students",
-              "host": ["{{base_url}}"],
-              "path": ["students"]
+              "raw": "{{graphql_url}}",
+              "host": ["{{graphql_url}}"]
             },
-            "description": "Get all students"
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response is an array\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.be.an('array');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query GetAllStudents {\\n  students {\\n    id\\n    name\\n    email\\n    grade\\n    books {\\n      id\\n      title\\n      author\\n      isbn\\n      publishedYear\\n      quantity\\n      availableQuantity\\n    }\\n  }\\n}\"\n}"
+            },
+            "description": "Get all students with their details"
+          }
         },
         {
           "name": "Get Student by ID",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "url": {
-              "raw": "{{base_url}}/students/{{student_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["students", "{{student_id}}"]
+              "raw": "{{graphql_url}}",
+              "host": ["{{graphql_url}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query GetStudent($studentId: String!) {\\n  student(id: $studentId) {\\n    id\\n    name\\n    email\\n    grade\\n    books {\\n      id\\n      title\\n      author\\n      isbn\\n      publishedYear\\n      quantity\\n      availableQuantity\\n    }\\n  }\\n}\",\n  \"variables\": {\n    \"studentId\": \"{{student_id}}\"\n  }\n}"
             },
             "description": "Get a specific student by ID"
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Student found\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData._id).to.eql(pm.environment.get(\"student_id\"));",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
+          }
+        },
+        {
+          "name": "Get Student's Books",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{graphql_url}}",
+              "host": ["{{graphql_url}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query GetStudentBooks($studentId: String!) {\\n  studentBooks(studentId: $studentId) {\\n    id\\n    title\\n    author\\n    isbn\\n    publishedYear\\n    quantity\\n    availableQuantity\\n  }\\n}\",\n  \"variables\": {\n    \"studentId\": \"{{student_id}}\"\n  }\n}"
+            },
+            "description": "Get all books assigned to a student"
+          }
+        },
+        {
+          "name": "Add Book to Student",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{graphql_url}}",
+              "host": ["{{graphql_url}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation AddBookToStudent($studentId: String!, $bookId: String!) {\\n  addBookToStudent(studentId: $studentId, bookId: $bookId) {\\n    id\\n    name\\n    email\\n    grade\\n    books {\\n      id\\n      title\\n      author\\n      isbn\\n      publishedYear\\n      quantity\\n      availableQuantity\\n    }\\n  }\\n}\",\n  \"variables\": {\n    \"studentId\": \"{{student_id}}\",\n    \"bookId\": \"{{book_id}}\"\n  }\n}"
+            },
+            "description": "Add a book to a student's collection"
+          }
+        },
+        {
+          "name": "Remove Book from Student",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{graphql_url}}",
+              "host": ["{{graphql_url}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation RemoveBookFromStudent($studentId: String!, $bookId: String!) {\\n  removeBookFromStudent(studentId: $studentId, bookId: $bookId) {\\n    id\\n    name\\n    email\\n    grade\\n    books {\\n      id\\n      title\\n      author\\n      isbn\\n      publishedYear\\n      quantity\\n      availableQuantity\\n    }\\n  }\\n}\",\n  \"variables\": {\n    \"studentId\": \"{{student_id}}\",\n    \"bookId\": \"{{book_id}}\"\n  }\n}"
+            },
+            "description": "Remove a book from a student's collection"
+          }
         }
       ]
     },
@@ -226,211 +271,76 @@
           "name": "Create Book",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "url": {
+              "raw": "{{graphql_url}}",
+              "host": ["{{graphql_url}}"]
+            },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"title\": \"The Great Gatsby\",\n    \"author\": \"F. Scott Fitzgerald\",\n    \"isbn\": \"978-0743273565\",\n    \"publishedYear\": 1925,\n    \"quantity\": 5\n}"
+              "raw": "{\n  \"query\": \"mutation CreateBook($title: String!, $author: String!, $isbn: String!, $publishedYear: Int!, $quantity: Int!) {\\n  createBook(title: $title, author: $author, isbn: $isbn, publishedYear: $publishedYear, quantity: $quantity) {\\n    id\\n    title\\n    author\\n    isbn\\n    publishedYear\\n    quantity\\n    availableQuantity\\n  }\\n}\",\n  \"variables\": {\n    \"title\": \"The Great Gatsby\",\n    \"author\": \"F. Scott Fitzgerald\",\n    \"isbn\": \"978-0743273565\",\n    \"publishedYear\": 1925,\n    \"quantity\": 5\n  }\n}"
             },
-            "url": {
-              "raw": "{{base_url}}/books",
-              "host": ["{{base_url}}"],
-              "path": ["books"]
-            },
-            "description": "Create a new book with valid data"
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 201\", function () {",
-                  "    pm.response.to.have.status(201);",
-                  "});",
-                  "",
-                  "pm.test(\"Book created successfully\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('_id');",
-                  "    pm.expect(jsonData.title).to.eql(\"The Great Gatsby\");",
-                  "    pm.environment.set(\"book_id\", jsonData._id);",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
+            "description": "Create a new book"
+          }
         },
         {
           "name": "Get All Books",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "url": {
-              "raw": "{{base_url}}/books",
-              "host": ["{{base_url}}"],
-              "path": ["books"]
+              "raw": "{{graphql_url}}",
+              "host": ["{{graphql_url}}"]
             },
-            "description": "Get all books"
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Response is an array\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.be.an('array');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query GetAllBooks {\\n  books {\\n    id\\n    title\\n    author\\n    isbn\\n    publishedYear\\n    quantity\\n    availableQuantity\\n  }\\n}\"\n}"
+            },
+            "description": "Get all books with their details"
+          }
         },
         {
           "name": "Get Book by ID",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "url": {
-              "raw": "{{base_url}}/books/{{book_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["books", "{{book_id}}"]
+              "raw": "{{graphql_url}}",
+              "host": ["{{graphql_url}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"query GetBook($bookId: String!) {\\n  book(id: $bookId) {\\n    id\\n    title\\n    author\\n    isbn\\n    publishedYear\\n    quantity\\n    availableQuantity\\n  }\\n}\",\n  \"variables\": {\n    \"bookId\": \"{{book_id}}\"\n  }\n}"
             },
             "description": "Get a specific book by ID"
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Book found\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData._id).to.eql(pm.environment.get(\"book_id\"));",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "Book Assignments",
-      "item": [
+          }
+        },
         {
-          "name": "Assign Book to Student",
+          "name": "Update Book",
           "request": {
             "method": "POST",
             "url": {
-              "raw": "{{base_url}}/books/student/{{student_id}}/books/{{book_id}}",
-              "host": ["{{base_url}}"],
-              "path": [
-                "books",
-                "student",
-                "{{student_id}}",
-                "books",
-                "{{book_id}}"
-              ]
+              "raw": "{{graphql_url}}",
+              "host": ["{{graphql_url}}"]
             },
-            "description": "Assign a book to a student"
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Book assigned successfully\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('message');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation UpdateBook($bookId: String!, $title: String!, $author: String!, $isbn: String!, $publishedYear: Int!, $quantity: Int!) {\\n  updateBook(id: $bookId, title: $title, author: $author, isbn: $isbn, publishedYear: $publishedYear, quantity: $quantity) {\\n    id\\n    title\\n    author\\n    isbn\\n    publishedYear\\n    quantity\\n    availableQuantity\\n  }\\n}\",\n  \"variables\": {\n    \"bookId\": \"{{book_id}}\",\n    \"title\": \"Updated Title\",\n    \"author\": \"Updated Author\",\n    \"isbn\": \"978-0743273566\",\n    \"publishedYear\": 1926,\n    \"quantity\": 10\n  }\n}"
+            },
+            "description": "Update an existing book"
+          }
         },
         {
-          "name": "Get Student's Books",
+          "name": "Delete Book",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "url": {
-              "raw": "{{base_url}}/books/student/{{student_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["books", "student", "{{student_id}}"]
+              "raw": "{{graphql_url}}",
+              "host": ["{{graphql_url}}"]
             },
-            "description": "Get all books assigned to a student"
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Student's books retrieved\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.be.an('array');",
-                  "    pm.expect(jsonData[0]._id).to.eql(pm.environment.get(\"book_id\"));",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
-        },
-        {
-          "name": "Remove Book from Student",
-          "request": {
-            "method": "DELETE",
-            "url": {
-              "raw": "{{base_url}}/books/student/{{student_id}}/books/{{book_id}}",
-              "host": ["{{base_url}}"],
-              "path": [
-                "books",
-                "student",
-                "{{student_id}}",
-                "books",
-                "{{book_id}}"
-              ]
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"mutation DeleteBook($bookId: String!) {\\n  deleteBook(id: $bookId)\\n}\",\n  \"variables\": {\n    \"bookId\": \"{{book_id}}\"\n  }\n}"
             },
-            "description": "Remove a book from a student"
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Status code is 200\", function () {",
-                  "    pm.response.to.have.status(200);",
-                  "});",
-                  "",
-                  "pm.test(\"Book removed successfully\", function () {",
-                  "    var jsonData = pm.response.json();",
-                  "    pm.expect(jsonData).to.have.property('message');",
-                  "});"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
+            "description": "Delete a book"
+          }
         }
       ]
     },
@@ -563,7 +473,13 @@
   "variable": [
     {
       "key": "base_url",
-      "value": "http://localhost:3000/api"
+      "value": "{{rest_api_url}}",
+      "type": "string"
+    },
+    {
+      "key": "graphql_url",
+      "value": "{{graphql_api_url}}",
+      "type": "string"
     }
   ]
 }

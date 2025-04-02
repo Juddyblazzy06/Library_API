@@ -10,7 +10,7 @@ const commonStringRules = {
     'string.max': 'This field cannot exceed {#limit} characters',
     'any.required': 'This field is required',
   },
-};
+}
 
 const commonIdRules = {
   pattern: /^[0-9a-fA-F]{24}$/,
@@ -18,15 +18,25 @@ const commonIdRules = {
     'string.pattern.base': 'Invalid ID format',
     'any.required': 'ID is required',
   },
-};
+}
 
 export const teacherSchema = Joi.object({
-  name: Joi.string().required().min(3).max(50).trim().messages(commonStringRules.messages),
+  name: Joi.string()
+    .required()
+    .min(3)
+    .max(50)
+    .trim()
+    .messages(commonStringRules.messages),
   email: Joi.string().email().required().trim().lowercase().messages({
     'string.email': 'Please enter a valid email address',
     'any.required': 'Email is required',
   }),
-  subject: Joi.string().required().min(2).max(50).trim().messages(commonStringRules.messages),
+  subject: Joi.string()
+    .required()
+    .min(2)
+    .max(50)
+    .trim()
+    .messages(commonStringRules.messages),
   phone: Joi.string()
     .pattern(/^\+?[1-9]\d{1,14}$/)
     .required()
@@ -38,7 +48,12 @@ export const teacherSchema = Joi.object({
 })
 
 export const studentSchema = Joi.object({
-  name: Joi.string().required().min(3).max(50).trim().messages(commonStringRules.messages),
+  name: Joi.string()
+    .required()
+    .min(3)
+    .max(50)
+    .trim()
+    .messages(commonStringRules.messages),
   email: Joi.string().email().required().trim().lowercase().messages({
     'string.email': 'Please enter a valid email address',
     'any.required': 'Email is required',
@@ -76,7 +91,8 @@ export const bookSchema = Joi.object({
     .pattern(/^[\d-]{10,13}$/)
     .trim()
     .messages({
-      'string.pattern.base': 'Please enter a valid ISBN (10-13 digits with optional hyphens)',
+      'string.pattern.base':
+        'Please enter a valid ISBN (10-13 digits with optional hyphens)',
       'any.required': 'ISBN is required',
     }),
   publishedYear: Joi.number()
@@ -91,27 +107,50 @@ export const bookSchema = Joi.object({
       'number.max': 'Published year cannot be in the future',
       'any.required': 'Published year is required',
     }),
-  quantity: Joi.number()
-    .integer()
-    .min(0)
-    .required()
-    .messages({
-      'number.base': 'Quantity must be a number',
-      'number.integer': 'Quantity must be a whole number',
-      'number.min': 'Quantity cannot be negative',
-      'any.required': 'Quantity is required',
-    }),
+  quantity: Joi.number().integer().min(0).required().messages({
+    'number.base': 'Quantity must be a number',
+    'number.integer': 'Quantity must be a whole number',
+    'number.min': 'Quantity cannot be negative',
+    'any.required': 'Quantity is required',
+  }),
 })
 
 // ID validation schemas
 export const teacherIdSchema = Joi.object({
-  teacherId: Joi.string().required().pattern(/^[0-9a-fA-F]{24}$/).trim().messages(commonIdRules.messages),
+  teacherId: Joi.string()
+    .required()
+    .pattern(/^[0-9a-fA-F]{24}$/)
+    .trim()
+    .messages(commonIdRules.messages),
 })
 
 export const studentIdSchema = Joi.object({
-  studentId: Joi.string().required().pattern(/^[0-9a-fA-F]{24}$/).trim().messages(commonIdRules.messages),
+  studentId: Joi.string()
+    .required()
+    .pattern(/^[0-9a-fA-F]{24}$/)
+    .trim()
+    .messages(commonIdRules.messages),
 })
 
+// Book ID validation schema
 export const bookIdSchema = Joi.object({
-  bookId: Joi.string().required().pattern(/^[0-9a-fA-F]{24}$/).trim().messages(commonIdRules.messages),
+  bookId: Joi.string()
+    .required()
+    .pattern(/^[0-9a-fA-F]{24}$/)
+    .trim()
+    .messages(commonIdRules.messages),
+})
+
+// Combined schema for student-book assignment
+export const studentBookAssignmentSchema = Joi.object({
+  studentId: Joi.string()
+    .required()
+    .pattern(/^[0-9a-fA-F]{24}$/)
+    .trim()
+    .messages(commonIdRules.messages),
+  bookId: Joi.string()
+    .required()
+    .pattern(/^[0-9a-fA-F]{24}$/)
+    .trim()
+    .messages(commonIdRules.messages),
 })

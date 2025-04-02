@@ -4,8 +4,10 @@
   "description": "Library Management System with GraphQL and REST APIs",
   "main": "dist/app.js",
   "scripts": {
-    "start": "node dist/app.js",
-    "dev": "nodemon src/app.ts",
+    "start": "node dist/server.js",
+    "start:graphql": "node dist/graphqlServer.js",
+    "dev": "nodemon src/server.ts",
+    "dev:graphql": "nodemon src/graphqlServer.ts",
     "build": "tsc",
     "test": "cross-env NODE_ENV=test jest --detectOpenHandles --forceExit",
     "test:watch": "cross-env NODE_ENV=test jest --watch",
