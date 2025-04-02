@@ -1,27 +1,50 @@
 import { ObjectType, Field, ID } from 'type-graphql'
-import { prop as Property, getModelForClass } from '@typegoose/typegoose'
-import { Student } from './Student'
+import { prop, getModelForClass, modelOptions } from '@typegoose/typegoose'
 
 @ObjectType()
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+    collection: 'teachers',
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
+})
 export class Teacher {
   @Field(() => ID)
   id!: string
 
   @Field()
-  @Property({ required: true })
+  @prop({ required: true })
   name!: string
 
   @Field()
-  @Property({ required: true, unique: true })
+  @prop({ required: true, unique: true })
   email!: string
 
   @Field()
-  @Property({ required: true })
+  @prop({ required: true })
   password!: string
 
-  @Field(() => [Student])
-  @Property({ type: () => [Student], default: [] })
-  students!: Student[]
+  @Field()
+  @prop({ required: true })
+  subject!: string
+
+  @Field()
+  @prop({ required: true })
+  phone!: string
+
+  @Field(() => [String])
+  @prop({ type: [String], default: [] })
+  students!: string[]
 }
 
-export const TeacherModel = getModelForClass(Teacher)
+// Create the model with custom options to prevent problematic indexes
+export const TeacherModel = getModelForClass(Teacher, {
+  schemaOptions: {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+    collection: 'teachers',
+  },
+})

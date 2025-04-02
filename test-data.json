@@ -1,0 +1,53 @@
+{
+  "books": [
+    {
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "isbn": "978-0743273565",
+      "publishedYear": 1925,
+      "quantity": 5
+    },
+    {
+      "title": "1984",
+      "author": "George Orwell",
+      "isbn": "978-0451524935",
+      "publishedYear": 1949,
+      "quantity": 3
+    },
+    {
+      "title": "To Kill a Mockingbird",
+      "author": "Harper Lee",
+      "isbn": "978-0446310789",
+      "publishedYear": 1960,
+      "quantity": 4
+    }
+  ],
+  "students": [
+    {
+      "name": "John Smith",
+      "email": "john.smith@example.com",
+      "grade": "10A",
+      "phone": "+1234567890"
+    },
+    {
+      "name": "Emma Wilson",
+      "email": "emma.wilson@example.com",
+      "grade": "11B",
+      "phone": "+1987654321"
+    }
+  ],
+  "teachers": [
+    {
+      "name": "Dr. Sarah Johnson",
+      "email": "sarah.johnson@example.com",
+      "subject": "English Literature",
+      "phone": "+1122334455"
+    },
+    {
+      "name": "Prof. Michael Brown",
+      "email": "michael.brown@example.com",
+      "subject": "Mathematics",
+      "phone": "+5544332211"
+    }
+  ]
+}

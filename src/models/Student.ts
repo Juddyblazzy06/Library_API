@@ -12,8 +12,8 @@ export class Student {
   name!: string
 
   @Field()
-  @Property({ required: true, unique: true })
-  email!: string
+  @Property({ required: false, unique: true, sparse: true })
+  email?: string
 
   @Field()
   @Property({ required: true })
