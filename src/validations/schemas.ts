@@ -73,12 +73,10 @@ export const bookSchema = Joi.object({
   }),
   isbn: Joi.string()
     .required()
-    .pattern(
-      /^(?:ISBN(?:-1[03])?:? )?(?=[0-9X]{10}$|(?=(?:[0-9]+[- ]){3})[- 0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[- ]){4})[- 0-9]{17}$)(?:97[89][- ]?)?[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$/
-    )
+    .pattern(/^[\d-]{10,13}$/)
     .trim()
     .messages({
-      'string.pattern.base': 'Please enter a valid ISBN',
+      'string.pattern.base': 'Please enter a valid ISBN (10-13 digits with optional hyphens)',
       'any.required': 'ISBN is required',
     }),
   publishedYear: Joi.number()
