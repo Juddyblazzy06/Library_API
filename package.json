@@ -5,13 +5,9 @@
   "main": "dist/app.js",
   "scripts": {
     "start": "node dist/server.js",
-    "start:graphql": "node dist/graphqlServer.js",
     "dev": "nodemon src/server.ts",
-    "dev:graphql": "nodemon src/graphqlServer.ts",
     "build": "tsc",
-    "test": "cross-env NODE_ENV=test jest --detectOpenHandles --forceExit",
-    "test:watch": "cross-env NODE_ENV=test jest --watch",
-    "test:coverage": "cross-env NODE_ENV=test jest --coverage"
+    "test": "cross-env NODE_ENV=test jest --detectOpenHandles --forceExit"
   },
   "jest": {
     "preset": "ts-jest",
