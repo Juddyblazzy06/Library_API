@@ -473,12 +473,12 @@
   "variable": [
     {
       "key": "base_url",
-      "value": "{{rest_api_url}}",
+      "value": "https://library-management-system.onrender.com",
       "type": "string"
     },
     {
       "key": "graphql_url",
-      "value": "{{graphql_api_url}}",
+      "value": "https://library-management-system.onrender.com/graphql",
       "type": "string"
     }
   ]
