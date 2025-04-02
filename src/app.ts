@@ -96,3 +96,5 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 export { app, connectDB }
+
+// Main application entry point
