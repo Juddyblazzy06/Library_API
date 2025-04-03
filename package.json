@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "dev": "nodemon src/server.ts",
-    "build": "tsc -p tsconfig.json",
+    "build": "npm ci && tsc -p tsconfig.json",
     "test": "cross-env NODE_ENV=test jest --detectOpenHandles --forceExit --config jest.config.js"
   },
   "jest": {
@@ -62,7 +62,7 @@
     "@types/joi": "^17.2.3",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/mongoose": "^5.11.97",
-    "@types/node": "^18.19.86",
+    "@types/node": "^18.15.11",
     "@types/supertest": "^2.0.16",
     "@types/winston": "^2.4.4",
     "cross-env": "^7.0.3",
