@@ -18,16 +18,6 @@
       "@/*": ["src/*"]
     },
     "typeRoots": ["./node_modules/@types"],
-    "types": [
-      "node",
-      "express",
-      "graphql",
-      "joi",
-      "jsonwebtoken",
-      "mongoose",
-      "supertest",
-      "winston"
-    ],
     "allowJs": true,
     "resolveJsonModule": true,
     "noImplicitAny": false
