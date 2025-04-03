@@ -1,4 +1,4 @@
-import { Redis } from 'ioredis'
+import Redis from 'ioredis'
 import { logger } from '../utils/logger'
 
 const redis = new Redis({
