@@ -16,10 +16,13 @@ import { errorHandler } from './middleware/errorHandler'
 dotenv.config()
 
 // Create separate Express apps for REST and GraphQL
+const app: Application = express()
 const restApp: Application = express()
 const graphqlApp: Application = express()
 
 // Middleware for both apps
+app.use(cors())
+app.use(express.json())
 restApp.use(cors())
 restApp.use(express.json())
 graphqlApp.use(cors())
@@ -73,6 +76,16 @@ const connectDB = async () => {
   }
 }
 
+const closeDB = async () => {
+  try {
+    await mongoose.connection.close()
+    console.log('MongoDB connection closed')
+  } catch (error) {
+    console.error('Error closing MongoDB connection:', error)
+    throw error
+  }
+}
+
 // Ports configuration
 const REST_PORT = process.env.REST_PORT || 4000
 const GRAPHQL_PORT = process.env.GRAPHQL_PORT || 4001
@@ -121,6 +134,6 @@ if (process.env.NODE_ENV !== 'test') {
   })
 }
 
-export { restApp, graphqlApp, connectDB }
+export { app, restApp, graphqlApp, connectDB, closeDB }
 
 // Main application entry point

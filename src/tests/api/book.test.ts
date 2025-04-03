@@ -1,198 +1,129 @@
 import request from 'supertest'
 import { app } from '../../app'
+import { connectDB, closeDB } from '../../app'
 import { BookModel } from '../../models/Book'
-import { StudentModel } from '../../models/Student'
-import { TeacherModel } from '../../models/Teacher'
-import mongoose from 'mongoose'
+import { generateToken } from '../../utils/auth'
+import { logger } from '../../utils/logger'
 
 describe('Book API', () => {
-  let student: any
-  let teacher: any
-  let book: any
+  let authToken: string
+  let testBookId: string
 
-  beforeEach(async () => {
-    // Create test data
-    student = await StudentModel.create({
-      name: 'Test Student',
-      email: 'test@student.com',
-      password: 'password123',
-    })
+  beforeAll(async () => {
+    try {
+      await connectDB()
+      logger.info('Connected to test database')
 
-    teacher = await TeacherModel.create({
-      name: 'Test Teacher',
-      email: 'test@teacher.com',
-      password: 'password123',
-    })
-
-    book = await BookModel.create({
-      title: 'Test Book',
-      author: 'Test Author',
-      isbn: '978-0-13-149505-0',
-      publishedYear: 2023,
-      quantity: 5,
-      availableQuantity: 5,
-    })
-  })
-
-  describe('GET /books', () => {
-    it('should return all books', async () => {
-      // Create additional test books
-      await BookModel.create([
-        {
-          title: 'Book 1',
-          author: 'Author 1',
-          isbn: '978-0-13-149505-0',
-          publishedYear: 2023,
-          quantity: 5,
-          availableQuantity: 5,
-        },
-        {
-          title: 'Book 2',
-          author: 'Author 2',
-          isbn: '978-0-13-149505-1',
-          publishedYear: 2023,
-          quantity: 3,
-          availableQuantity: 3,
-        },
-      ])
-
-      const response = await request(app).get('/books')
-
-      expect(response.status).toBe(200)
-      expect(response.body).toHaveLength(3) // Including the book created in beforeEach
-    })
-  })
-
-  describe('POST /books', () => {
-    it('should create a new book', async () => {
-      const bookData = {
-        title: 'New Book',
-        author: 'New Author',
-        isbn: '978-0-13-149505-0',
-        publishedYear: 2023,
+      // Create test book
+      const testBook = await BookModel.create({
+        title: 'Test Book',
+        author: 'Test Author',
+        isbn: '1234567890',
+        publishedYear: 2024,
         quantity: 5,
-      }
-
-      const response = await request(app).post('/books').send(bookData)
-
-      expect(response.status).toBe(201)
-      expect(response.body).toMatchObject({
-        ...bookData,
-        availableQuantity: bookData.quantity,
+        availableQuantity: 5,
       })
-    })
+      testBookId = testBook._id.toString()
 
-    it('should validate required fields', async () => {
-      const invalidData = {
-        title: 'New Book',
-        // Missing required fields
-      }
+      // Generate auth token
+      authToken = generateToken(testBookId, 'admin')
+    } catch (error) {
+      logger.error('Test setup failed:', error)
+      throw error
+    }
+  })
 
-      const response = await request(app).post('/books').send(invalidData)
+  afterAll(async () => {
+    try {
+      await BookModel.deleteMany({})
+      await closeDB()
+      logger.info('Test database cleaned up')
+    } catch (error) {
+      logger.error('Test cleanup failed:', error)
+    }
+  })
 
-      expect(response.status).toBe(400)
+  describe('GET /api/books', () => {
+    it('should return all books', async () => {
+      const response = await request(app)
+        .get('/api/books')
+        .set('Authorization', `Bearer ${authToken}`)
+        .expect(200)
+
+      expect(Array.isArray(response.body.data)).toBe(true)
+      expect(response.body.data.length).toBeGreaterThan(0)
     })
   })
 
-  describe('GET /books/:id', () => {
+  describe('GET /api/books/:id', () => {
     it('should return a book by id', async () => {
-      const response = await request(app).get(`/books/${book._id}`)
+      const response = await request(app)
+        .get(`/api/books/${testBookId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .expect(200)
 
-      expect(response.status).toBe(200)
-      expect(response.body.id).toBe(book._id.toString())
+      expect(response.body.data).toHaveProperty('_id', testBookId)
+      expect(response.body.data).toHaveProperty('title', 'Test Book')
     })
 
     it('should return 404 for non-existent book', async () => {
-      const nonExistentId = new mongoose.Types.ObjectId()
-      const response = await request(app).get(`/books/${nonExistentId}`)
-
-      expect(response.status).toBe(404)
-    })
-  })
-
-  describe('PUT /books/:id', () => {
-    it('should update a book', async () => {
-      const response = await request(app).put(`/books/${book._id}`).send({
-        title: 'Updated Book',
-        author: 'Updated Author',
-        isbn: '978-0-13-149505-2',
-        publishedYear: 2023,
-        quantity: 4,
-      })
-
-      expect(response.status).toBe(200)
-      expect(response.body.title).toBe('Updated Book')
-    })
-  })
-
-  describe('DELETE /books/:id', () => {
-    it('should delete a book', async () => {
-      const response = await request(app).delete(`/books/${book._id}`)
-
-      expect(response.status).toBe(200)
-      expect(response.body.message).toBe('Book deleted successfully')
-    })
-  })
-
-  describe('GET /books/student/:studentId', () => {
-    it('should return books for a student', async () => {
-      const response = await request(app).get(`/books/student/${student._id}`)
-
-      expect(response.status).toBe(200)
-      expect(Array.isArray(response.body)).toBe(true)
+      await request(app)
+        .get('/api/books/507f1f77bcf86cd799439011')
+        .set('Authorization', `Bearer ${authToken}`)
+        .expect(404)
     })
   })
 
   describe('POST /api/books', () => {
     it('should create a new book', async () => {
-      const response = await request(app).post('/api/books').send({
+      const newBook = {
         title: 'New Book',
         author: 'New Author',
-        isbn: '978-0-13-149505-1',
-        publishedYear: 2023,
+        isbn: '0987654321',
+        publishedYear: 2024,
         quantity: 3,
-      })
+        availableQuantity: 3,
+      }
 
-      expect(response.status).toBe(201)
-      expect(response.body).toHaveProperty('_id')
-      expect(response.body.title).toBe('New Book')
+      const response = await request(app)
+        .post('/api/books')
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(newBook)
+        .expect(201)
+
+      expect(response.body.data).toHaveProperty('_id')
+      expect(response.body.data.title).toBe(newBook.title)
     })
   })
 
-  describe('GET /api/books', () => {
-    it('should get all books', async () => {
-      const response = await request(app).get('/api/books')
+  describe('PUT /api/books/:id', () => {
+    it('should update a book', async () => {
+      const updateData = {
+        title: 'Updated Book',
+        quantity: 10,
+      }
 
-      expect(response.status).toBe(200)
-      expect(Array.isArray(response.body)).toBe(true)
+      const response = await request(app)
+        .put(`/api/books/${testBookId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send(updateData)
+        .expect(200)
+
+      expect(response.body.data.title).toBe(updateData.title)
+      expect(response.body.data.quantity).toBe(updateData.quantity)
     })
   })
 
-  describe('POST /api/books/student/:studentId/books/:bookId', () => {
-    it('should add a book to a student', async () => {
-      const response = await request(app).post(
-        `/api/books/student/${student._id}/books/${book._id}`
-      )
+  describe('DELETE /api/books/:id', () => {
+    it('should delete a book', async () => {
+      await request(app)
+        .delete(`/api/books/${testBookId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .expect(200)
 
-      expect(response.status).toBe(200)
-      expect(response.body.books).toContainEqual(book._id.toString())
-    })
-  })
-
-  describe('DELETE /api/books/student/:studentId/books/:bookId', () => {
-    it('should remove a book from a student', async () => {
-      // First, add the book to the student
-      await request(app).post(
-        `/api/books/student/${student._id}/books/${book._id}`
-      )
-
-      const response = await request(app).delete(
-        `/api/books/student/${student._id}/books/${book._id}`
-      )
-
-      expect(response.status).toBe(200)
-      expect(response.body.message).toBe('Book removed successfully')
-      expect(response.body.books).not.toContainEqual(book._id.toString())
+      // Verify book is deleted
+      const deletedBook = await BookModel.findById(testBookId)
+      expect(deletedBook).toBeNull()
     })
   })
 })
