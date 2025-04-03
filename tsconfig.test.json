@@ -1,17 +1,6 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "types": [
-      "node",
-      "jest",
-      "express",
-      "mongoose",
-      "winston",
-      "joi",
-      "supertest",
-      "graphql",
-      "jsonwebtoken"
-    ],
     "typeRoots": ["./node_modules/@types"],
     "noImplicitAny": false
   },
