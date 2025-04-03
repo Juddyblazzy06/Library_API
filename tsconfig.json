@@ -22,7 +22,6 @@
       "node",
       "express",
       "graphql",
-      "jest",
       "joi",
       "jsonwebtoken",
       "mongoose",
